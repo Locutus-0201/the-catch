@@ -161,3 +161,48 @@ model SchoolRivalry {
 
   @@unique([schoolAId, schoolBId])
 }
+
+model Rower {
+  id                String               @id @default(cuid())
+  firstName         String
+  lastName          String
+  currentSchoolId   String
+  currentSchool     School               @relation(fields: [currentSchoolId], references: [id])
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  results           ResultRower[]
+  ergScores         ErgScore[]
+  schoolHistory     RowerSchoolHistory[]
+  personalBests     PersonalBest[]
+
+  @@unique([firstName, lastName, currentSchoolId])
+}
+
+model RowerSchoolHistory {
+  id        String   @id @default(cuid())
+  rowerId   String
+  rower     Rower    @relation(fields: [rowerId], references: [id])
+  schoolId  String
+  school    School   @relation(fields: [schoolId], references: [id])
+  seasonId  String
+  season    Season   @relation(fields: [seasonId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([rowerId, seasonId])
+}
+
+model PersonalBest {
+  id           String   @id @default(cuid())
+  rowerId      String
+  rower        Rower    @relation(fields: [rowerId], references: [id])
+  boatClass    String
+  ageGroup     String
+  finishTimeMs Int
+  resultId     String
+  result       Result   @relation(fields: [resultId], references: [id])
+  achievedAt   DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([rowerId, boatClass, ageGroup])
+}
