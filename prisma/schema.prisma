@@ -6,3 +6,44 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
+enum RegattaTier {
+  SA_CHAMPS
+  NATIONAL
+  REGIONAL
+  CLUB
+}
+
+enum RegattaStatus {
+  UPCOMING
+  DRAW_PUBLISHED
+  RACING
+  RESULTS_FINAL
+  ARCHIVED
+}
+
+model Season {
+  id        String    @id @default(cuid())
+  year      Int       @unique
+  label     String
+  createdAt DateTime  @default(now())
+  regattas  Regatta[]
+  rowerSchoolHistories RowerSchoolHistory[]
+}
+
+model Regatta {
+  id          String        @id @default(cuid())
+  name        String
+  sourceUrl   String        @unique
+  seasonId    String
+  season      Season        @relation(fields: [seasonId], references: [id])
+  tier        RegattaTier   @default(REGIONAL)
+  status      RegattaStatus @default(UPCOMING)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  events      Event[]
+  weatherLogs WeatherLog[]
+  scraperLogs ScraperLog[]
+}
