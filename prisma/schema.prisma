@@ -206,3 +206,43 @@ model PersonalBest {
 
   @@unique([rowerId, boatClass, ageGroup])
 }
+
+model ErgScore {
+  id          String   @id @default(cuid())
+  rowerId     String
+  rower       Rower    @relation(fields: [rowerId], references: [id])
+  distanceM   Int?
+  durationS   Int?
+  timeMs      Int
+  recordedAt  DateTime
+  notes       String?
+  createdAt   DateTime @default(now())
+}
+
+model WeatherLog {
+  id               String   @id @default(cuid())
+  regattaId        String
+  regatta          Regatta  @relation(fields: [regattaId], references: [id])
+  recordedAt       DateTime
+  windSpeedKph     Float?
+  windDirectionDeg Int?
+  coachRating      Int?
+  notes            String?
+  createdAt        DateTime @default(now())
+}
+
+model AppUser {
+  id             String   @id @default(cuid())
+  cookieToken    String   @unique
+  pinnedSchoolId String?
+  createdAt      DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  schoolId  String
+  eventName String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
