@@ -124,3 +124,40 @@ model ResultRower {
   rower      Rower  @relation(fields: [rowerId], references: [id])
   seatNumber Int?
 }
+
+model School {
+  id              String          @id @default(cuid())
+  name            String          @unique
+  shortName       String?
+  isMasters       Boolean         @default(false)
+  isUniversity    Boolean         @default(false)
+  createdAt       DateTime        @default(now())
+  aliases         SchoolAlias[]
+  rowers          Rower[]
+  results         Result[]
+  rivalriesAsA    SchoolRivalry[] @relation("SchoolA")
+  rivalriesAsB    SchoolRivalry[] @relation("SchoolB")
+  rowerSchoolHistories RowerSchoolHistory[]
+}
+
+model SchoolAlias {
+  id       String @id @default(cuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  alias    String @unique
+}
+
+model SchoolRivalry {
+  id          String   @id @default(cuid())
+  schoolAId   String
+  schoolBId   String
+  schoolA     School   @relation("SchoolA", fields: [schoolAId], references: [id])
+  schoolB     School   @relation("SchoolB", fields: [schoolBId], references: [id])
+  winsA       Int      @default(0)
+  winsB       Int      @default(0)
+  draws       Int      @default(0)
+  totalRaces  Int      @default(0)
+  lastUpdated DateTime @updatedAt
+
+  @@unique([schoolAId, schoolBId])
+}
