@@ -47,3 +47,80 @@ model Regatta {
   weatherLogs WeatherLog[]
   scraperLogs ScraperLog[]
 }
+
+enum RaceType {
+  HEAT
+  SEMIFINAL
+  FINAL_A
+  FINAL_B
+  FINAL_C
+}
+
+enum RaceStatus {
+  DRAW
+  COMPLETE
+}
+
+enum ResultStatus {
+  FINISHED
+  DNS
+  DNF
+  DSQ
+}
+
+model Event {
+  id        String   @id @default(cuid())
+  regattaId String
+  regatta   Regatta  @relation(fields: [regattaId], references: [id], onDelete: Cascade)
+  name      String
+  ageGroup  String
+  boatClass String
+  gender    String
+  sourceUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  races     Race[]
+
+  @@unique([regattaId, name])
+}
+
+model Race {
+  id         String     @id @default(cuid())
+  eventId    String
+  event      Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  raceType   RaceType
+  heatNumber Int?
+  status     RaceStatus @default(DRAW)
+  sourceUrl  String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  results    Result[]
+}
+
+model Result {
+  id             String        @id @default(cuid())
+  raceId         String
+  race           Race          @relation(fields: [raceId], references: [id], onDelete: Cascade)
+  schoolId       String
+  school         School        @relation(fields: [schoolId], references: [id])
+  lane           Int?
+  placement      Int?
+  finishTimeMs   Int?
+  resultStatus   ResultStatus  @default(FINISHED)
+  points         Int           @default(0)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  crewMembers    ResultRower[]
+  personalBests  PersonalBest[]
+
+  @@unique([raceId, schoolId])
+}
+
+model ResultRower {
+  id         String @id @default(cuid())
+  resultId   String
+  result     Result @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  rowerId    String
+  rower      Rower  @relation(fields: [rowerId], references: [id])
+  seatNumber Int?
+}
