@@ -246,3 +246,27 @@ model Notification {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+enum ScraperRunStatus {
+  SUCCESS
+  PARTIAL
+  FAILED
+}
+
+model ScraperLog {
+  id                   String           @id @default(cuid())
+  regattaId            String?
+  regatta              Regatta?         @relation(fields: [regattaId], references: [id])
+  regattaUrl           String
+  status               ScraperRunStatus
+  startedAt            DateTime
+  completedAt          DateTime?
+  durationMs           Int?
+  eventsScanned        Int              @default(0)
+  racesScanned         Int              @default(0)
+  resultsCreated       Int              @default(0)
+  resultsUpdated       Int              @default(0)
+  notificationsCreated Int              @default(0)
+  errors               String?
+  createdAt            DateTime         @default(now())
+}
