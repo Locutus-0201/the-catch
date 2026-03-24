@@ -18,9 +18,9 @@
     "db:reset": "prisma migrate reset --force"
   },
   "dependencies": {
-    "@prisma/client": "^7.5.0",
+    "@prisma/client": "^6.19.2",
     "next": "16.2.1",
-    "prisma": "^7.5.0",
+    "prisma": "^6.19.2",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
